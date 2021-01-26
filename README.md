@@ -1,5 +1,5 @@
 # Minesweeper
-Graphics next
-No win condition implemented yet
 
-Reinforcement Learning eventually?
+to do:
+tkinter for graphics
+experiment with Reinforcement Learning
