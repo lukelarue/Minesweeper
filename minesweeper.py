@@ -1,6 +1,4 @@
 import numpy as np
-import tkinter as tk
-import minesweeper_tkinter
 
 class Game:
     '''
@@ -159,6 +157,7 @@ class Game:
             return self.selected_safespots - previous_safespots
 
     def tkinter_play(self):
+        import minesweeper_tkinter
         minesweeper_tkinter.play_minesweeper(self.n, self.m)
 
     def human_play(self, firstClick):
