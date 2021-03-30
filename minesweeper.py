@@ -1,4 +1,6 @@
 import numpy as np
+import tkinter as tk
+import minesweeper_tkinter
 
 class Game:
     '''
@@ -15,13 +17,14 @@ class Game:
         stateboard (nxn array) - the board the player sees during play
 
         -1 is a mine
-        -9 is an uncovered spot on player board
+        9 is an uncovered spot on player board
         '''
         self.n = n
         self.m = m
         self.board = np.zeros((self.n, self.n), dtype=int)
         self.stateboard = np.zeros((self.n, self.n), dtype=int)
-        self.stateboard.fill(-9)
+        self.stateboard.fill(9)
+        self.begin = False # activates once init_mines is started
 
     def rowcol(self, num):
         '''
@@ -44,6 +47,8 @@ class Game:
         safespots (set containing all elements in range n**2 without the mines)
         selected_safespots (set that is updated when a safespot is selected)
         '''
+        
+        self.begin = True
 
         def fillnumbers(row, col):
             '''
@@ -67,7 +72,7 @@ class Game:
 
             # create master list of all safespots and create updated list of already selected safespots
             self.safespots = set(np.delete(np.array(range(self.n ** 2)), self.mines))
-            self.selected_safespots = set([firstClick])
+            self.selected_safespots = set()
 
         row, col = self.rowcol(firstClick)
         # create list of all spots in a 3x3 grid around the first click - these cannot contain mines
@@ -120,15 +125,21 @@ class Game:
     def action(self, click):
         '''
         Execute whats happens after someone clicks - click is given as the index integer
-        Return 1 if you hit a mine, 0 otherwise
+        Return 1 if you hit a mine, 0 otherwise, 2 if win
         '''
         row, col = self.rowcol(click)
+        
+        # return 3 if you already clicked there
+        if(click in self.selected_safespots):
+            return 3
 
-        # die if u hit the mine --- 0 is inplay, 1 is die, 2 is game win
+        # die if u hit the mine --- 0 is inplay, 1 is die, 2 is game win, 3 is you already clicked there
         if (self.board[row][col] == -1):
             return 1
 
         self.selected_safespots.add(click)
+        if self.selected_safespots == self.safespots:
+            return 2
 
         # just show the one you clicked if there is a mine nearby
         if (self.board[row][col] > 0):
@@ -139,6 +150,7 @@ class Game:
         if (self.board[row][col] == 0):
             self.showAdjacentNumbers(row, col, set())
             return 0
+         
 
     def victory(self):
         print('You Win!!!')
@@ -151,13 +163,19 @@ class Game:
         # get selected_safespots before and after and return the index, value of after from before
         previous_safespots = self.selected_safespots.copy()
         result = self.action(click)
-        if (result == 1):
+        if (result == 1): 
             return 'loss'
         else:
             return self.selected_safespots - previous_safespots
+        
+    def rl_action(self, click):
+        if(self.begin):
+            return self.action(click)
+        else:
+            self.initMines(click)
+            return self.action(click)
 
     def tkinter_play(self):
-        import minesweeper_tkinter
         minesweeper_tkinter.play_minesweeper(self.n, self.m)
 
     def human_play(self, firstClick):
@@ -188,8 +206,7 @@ class Game:
         print("Begin")
 
         # keep playing while result == 0, lose game if result == 1, stop playing if you have selected all safespots
-        while result == 0:
-
+        while (result == 0 or result == 3):
             print(self.stateboard)
 
             if (self.selected_safespots == self.safespots):
@@ -197,6 +214,10 @@ class Game:
                 return
             click = select_action()
             result = self.action(click)
+        
+        if result == 2:
+            self.victory()
+            return
 
         if result == 1:
             self.loser()
