@@ -1,4 +1,4 @@
-# Minesweeper
+# Minesweeper - GUI and Reinforcement Learning
 
 Minesweeper.py contains the minesweeper class
 
