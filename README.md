@@ -1,5 +1,7 @@
 # Minesweeper
 
+View screenshots to see the graphical user interface
+
 Minesweeper.py contains the minesweeper class
 
 Minesweeper_tkinter is a way to play minesweeper with a GUI
