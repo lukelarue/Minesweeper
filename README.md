@@ -1,9 +1,13 @@
 # Minesweeper
 
-View screenshots to see the graphical user interface
+How to open a game of minesweeper to play:
+from minesweeper import Game
+game = Game (16, 40) -> initialize a minesweeper game on a 16 x 16 board with 40 mines
+game.tkinter_play() -> pops up a new window to play minesweeper
 
-Minesweeper.py contains the minesweeper class
+Requirements: 
+numpy
+tkinter
+Pillow (PIL)
 
-Minesweeper_tkinter is a way to play minesweeper with a GUI
 
-Minegym is a notebook where I use OpenAI Gym to create and train a Reinforcement Learning model that learns how to play Minesweeper.
