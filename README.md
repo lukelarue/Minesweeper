@@ -1,6 +1,6 @@
 # Minesweeper
 
-!MinesweeperImage(https://github.com/schplahtzler/Minesweeper/blob/main/Screenshots/minesweeper_image1.png?raw=true)
+![MinesweeperImage](https://github.com/schplahtzler/Minesweeper/blob/main/Screenshots/minesweeper_image1.png?raw=true)
 
 How to open a game of minesweeper to play:<br />
 from minesweeper import Game<br />
