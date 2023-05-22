@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minesweeper</title>
+</head>
+<body>  
+    <h1>Current Board:</h1>
+    <h3>9 is unknown, 0 is blank.</h3>
+    {% for i in game.stateboard %}
+        <p>
+        {% for j in i %}
+            {{j}}
+        {% endfor %}
+        </p>
+    {% endfor %}
+    
+    <h1>Selections:</h1>
+    {% for i in selection_visualizer %}
+        <p>
+        {% for j in i %}
+            {{j}}
+        {% endfor %}
+        </p>
+    {% endfor %} 
+
+</body>
+
+</html>

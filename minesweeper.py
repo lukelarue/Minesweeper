@@ -1,6 +1,4 @@
 import numpy as np
-import tkinter as tk
-import minesweeper_tkinter
 
 class Game:
     '''
@@ -150,13 +148,6 @@ class Game:
         if (self.board[row][col] == 0):
             self.showAdjacentNumbers(row, col, set())
             return 0
-         
-
-    def victory(self):
-        print('You Win!!!')
-
-    def loser(self):
-        print('You Lose')
 
     def run_click(self, click):  # called once game is initialized to run plays
 
@@ -168,17 +159,8 @@ class Game:
         else:
             return self.selected_safespots - previous_safespots
         
-    def rl_action(self, click):
-        if(self.begin):
-            return self.action(click)
-        else:
-            self.initMines(click)
-            return self.action(click)
 
-    def tkinter_play(self):
-        minesweeper_tkinter.play_minesweeper(self.n, self.m)
-
-    def human_play(self, firstClick):
+    def play(self, firstClick):
         '''
         Executes human gameplay
         '''
