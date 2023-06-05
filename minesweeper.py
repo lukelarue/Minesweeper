@@ -12,7 +12,7 @@ class Game:
         n (int) - dimensions of board square
         m (int) - number of mines on the board
         board (nxn array) - the actual board
-        stateboard (nxn array) - the board the player sees during play
+        game_state (nxn array) - the state of the game player sees during play
 
         -1 is a mine
         9 is an uncovered spot on player board
@@ -20,13 +20,49 @@ class Game:
         self.n = n
         self.m = m
         self.board = np.zeros((self.n, self.n), dtype=int)
-        self.stateboard = np.zeros((self.n, self.n), dtype=int)
-        self.stateboard.fill(9)
-        self.begin = False # activates once init_mines is started
+        self.game_state = np.ones((self.n, self.n), dtype=int) * 9
+        self.board_setup_required=True # board is initialized once the first click is given
+    
+    def step(self, click):
+        '''
+        *To replace self.action()
+        Initialize board if just beginning
+        Execute whats happens after someone clicks - click is given as the index integer
+        Return 1 if you hit a mine, 0 otherwise, 2 if win
+        '''
+        if self.board_setup_required:
+            self.initMines(click)
+            self.board_setup_required = False
+        
+        row, col = self.rowcol(click)
+        
+        # return 3 if you already clicked there
+        if(click in self.selected_safespots):
+            return 3
+
+        # die if u hit the mine --- 0 is inplay, 1 is die, 2 is game win, 3 is you already clicked there
+        if (self.board[row][col] == -1):
+            return 1
+
+        self.selected_safespots.add(click)
+        if self.selected_safespots == self.safespots: # you won!
+            return 2
+
+        # just show the one you clicked if there is a mine nearby
+        if (self.board[row][col] > 0):
+            self.game_state[row][col] = self.board[row][col]
+            return 0
+
+        # show all blank spaces adjacent if you clicked a 0
+        if (self.board[row][col] == 0):
+            self.showAdjacentNumbers(row, col, set())
+            return 0
+
+
 
     def rowcol(self, num):
         '''
-        Changes number index to row and column index
+        Convert number index to row and column index
         '''
         row = num // self.n
         col = int(np.round(((num / self.n) - row) * self.n))
@@ -46,8 +82,6 @@ class Game:
         selected_safespots (set that is updated when a safespot is selected)
         '''
         
-        self.begin = True
-
         def fillnumbers(row, col):
             '''
             Adds 1 to all squares around the mine if they should be added
@@ -89,7 +123,7 @@ class Game:
 
     def showAdjacentNumbers(self, row, col, visited, start_flag=True):
         '''
-        shows all adjacent zeros until they hit a number in the stateboard - recursive search
+        shows all adjacent zeros until they hit a number in the game_state - recursive search
         '''
         if (start_flag):
             visited = set()
@@ -107,16 +141,16 @@ class Game:
             return
 
 
-        # show the zero in the stateboard and continue searching all around
+        # show the zero in the game_state and continue searching all around
         elif (self.board[row][col] == 0):
-            self.stateboard[row][col] = 0
+            self.game_state[row][col] = 0
             for i in [-1, 0, 1]:
                 for j in [-1, 0, 1]:
                     if not (j == 0 and i == 0):
                         self.showAdjacentNumbers(row + i, col + j, visited, start_flag)
         # show the number and discontinue searching if you hit a number
         else:
-            self.stateboard[row][col] = self.board[row][col]
+            self.game_state[row][col] = self.board[row][col]
 
         self.selected_safespots.add(self.index(row, col))
 
@@ -141,7 +175,7 @@ class Game:
 
         # just show the one you clicked if there is a mine nearby
         if (self.board[row][col] > 0):
-            self.stateboard[row][col] = self.board[row][col]
+            self.game_state[row][col] = self.board[row][col]
             return 0
 
         # show all blank spaces adjacent if you clicked a 0
@@ -189,7 +223,7 @@ class Game:
 
         # keep playing while result == 0, lose game if result == 1, stop playing if you have selected all safespots
         while (result == 0 or result == 3):
-            print(self.stateboard)
+            print(self.game_state)
 
             if (self.selected_safespots == self.safespots):
                 self.victory()
