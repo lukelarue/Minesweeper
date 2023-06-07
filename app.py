@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from minesweeper import Game  # Your Minesweeper module
 import uuid
 import numpy as np
@@ -9,7 +9,7 @@ games = {}
 
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
+    return render_template('index.html')
 
 @app.route('/start', methods=['POST'])
 def start():
