@@ -35,4 +35,5 @@ def move():
     return jsonify(game.game_state.tolist())
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
+
