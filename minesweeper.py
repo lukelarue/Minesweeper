@@ -25,10 +25,8 @@ class Game:
     
     def step(self, click):
         '''
-        *To replace self.action()
         Initialize board if just beginning
         Execute whats happens after someone clicks - click is given as the index integer
-        Return 1 if you hit a mine, 0 otherwise, 2 if win
         '''
         if self.board_setup_required:
             self.initMines(click)
@@ -36,27 +34,33 @@ class Game:
         
         row, col = self.rowcol(click)
         
-        # return 3 if you already clicked there
+        ### categorical result of the click
         if(click in self.selected_safespots):
-            return 3
+            click_result = "already_selected"
 
-        # die if u hit the mine --- 0 is inplay, 1 is die, 2 is game win, 3 is you already clicked there
-        if (self.board[row][col] == -1):
-            return 1
+        elif (self.board[row][col] == -1):
+            click_result = "loss"
 
-        self.selected_safespots.add(click)
-        if self.selected_safespots == self.safespots: # you won!
-            return 2
+        elif self.selected_safespots == self.safespots:
+            click_result = "victory"
 
-        # just show the one you clicked if there is a mine nearby
         if (self.board[row][col] > 0):
-            self.game_state[row][col] = self.board[row][col]
-            return 0
+            click_result = "mine_adjacent"
 
-        # show all blank spaces adjacent if you clicked a 0
         if (self.board[row][col] == 0):
+            click_result = "blank_spot"
+
+
+        ### environment adjustments as a result of the click
+        if click_result in ["victory", "mine_adjacent", "blank_spot"]:
+            self.selected_safespots.add(click)
+        
+        if click_result == "mine_adjacent":
+            self.game_state[row][col] = self.board[row][col]
+        
+        if click_result == "blank_spot":
             self.showAdjacentNumbers(row, col, set())
-            return 0
+    
 
 
 
