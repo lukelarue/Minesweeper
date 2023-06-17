@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, render_template
-from minesweeper import Game  # Your Minesweeper module
+from Legacy.minesweeper import Game  # Your Minesweeper module
 import uuid
 import numpy as np
 
