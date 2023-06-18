@@ -1,3 +1,7 @@
+#boardSize, #numMines {
+    width: 150px;
+}
+
 #grid {
     border-collapse: collapse;
 }
@@ -9,3 +13,9 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+
+#gameBoard img {
+    width: 30px;
+    height: 30px;
+}
+

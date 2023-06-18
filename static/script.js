@@ -1,6 +1,10 @@
+// Global variables boardSize and numMines
+var boardSize;
+var numMines;
+
 function startGame() {
-    var boardSize = document.getElementById('boardSize').value;
-    var numMines = document.getElementById('numMines').value;
+    boardSize = document.getElementById('boardSize').value;
+    numMines = document.getElementById('numMines').value;
     fetch('/start', {
         method: 'POST',
         headers: {
@@ -45,11 +49,13 @@ function makeMove(row, col) {
     .then(response => response.json())
     .then(data => {
         // Update game board in HTML
-        var gameBoard = document.getElementById('gameBoard');
         for (var i = 0; i < boardSize; i++) {
             for (var j = 0; j < boardSize; j++) {
                 var img = document.getElementById('cell'+i+'-'+j);
-                img.setAttribute('src', '/static/images/' + data.board[i][j] + '.png');
+                var imgValue = data.board[i][j];
+                // check if imgValue is 9, if yes, use 'unrevealed' as image name
+                var imgName = imgValue === 9 ? 'unrevealed' : imgValue;
+                img.setAttribute('src', '/static/images/' + imgName + '.png');
             }
         }
 
@@ -63,3 +69,11 @@ function makeMove(row, col) {
         }
     });
 }
+
+function setMaxMines() {
+    boardSize = document.getElementById('boardSize').value;
+    var maxMines = Math.floor(boardSize * boardSize / 4);
+    var minesInput = document.getElementById('numMines');
+    minesInput.setAttribute('max', maxMines);
+}
+
