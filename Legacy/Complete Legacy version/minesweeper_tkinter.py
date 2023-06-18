@@ -1,5 +1,5 @@
 import tkinter as tk
-import minesweeper as ms
+import Legacy.minesweeper as ms
 from PIL import ImageTk, Image
 import numpy as np
 

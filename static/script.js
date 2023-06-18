@@ -1,35 +1,22 @@
-function displayBoard(board) {
-    var boardString = board.map(row => row.join(' ')).join('\n');
-    document.getElementById('board').textContent = boardString;
-}
-
-var gameId;
-
-document.getElementById('start').addEventListener('click', function() {
-    fetch('/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ length: 10, mines: 10 })
-    })
-    .then(response => response.json())
-    .then(data => {
-        gameId = data.game_id;
-        displayBoard(data.board);
-        var totalTiles = data.board.length * data.board[0].length;
-        document.getElementById('move-input').max = totalTiles - 1;
-    });
-});
-
-document.getElementById('move-form').addEventListener('submit', function(e) {
-    e.preventDefault(); 
-    var move = +document.getElementById('move-input').value;
+function makeMove(row, col) {
+    var action = row * 8 + col; // Assuming 8x8 board
     fetch('/move', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ game_id: gameId, move: move })
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: action
+        })
     })
     .then(response => response.json())
     .then(data => {
-        displayBoard(data);
+        // Update game board
+        for (var i = 0; i < 8; i++) { // Assuming 8x8 board
+            for (var j = 0; j < 8; j++) {
+                document.getElementById('gameBoard').rows[i].cells[j].innerHTML =
+                    '<img src="' + data.board[i][j] + '.png">';
+            }
+        }
     });
-});
+}

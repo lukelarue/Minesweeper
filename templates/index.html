@@ -2,18 +2,19 @@
 <html>
 <head>
     <title>Minesweeper</title>
-    <style>
-        /* Define your CSS styles here */
-    </style>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
-    <button id="start">Start New Game</button>
-    <pre id="board"></pre>
-    <form id="move-form">
-        <input type="number" id="move-input" min="0" placeholder="Enter move">
-        <button type="submit">Submit Move</button>
-    </form>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <table id="gameBoard">
+    {% for row in board %}
+        <tr>
+        {% for cell in row %}
+            <td onclick="makeMove({{ loop.index0 }}, {{ loop.parent.loop.index0 }})">
+                <img src="{{ url_for('static', filename='images/unrevealed.png') }}">
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
 </body>
 </html>
