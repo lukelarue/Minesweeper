@@ -2,19 +2,16 @@
 <html>
 <head>
     <title>Minesweeper</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
+    <div class="center">
+        <input type="number" id="boardSize" placeholder="Enter board size">
+        <input type="number" id="numMines" placeholder="Enter number of mines">
+        <button onclick="startGame()">Start Game</button>
+    </div>
     <table id="gameBoard">
-    {% for row in board %}
-        <tr>
-        {% for cell in row %}
-            <td onclick="makeMove({{ loop.index0 }}, {{ loop.parent.loop.index0 }})">
-                <img src="{{ url_for('static', filename='images/unrevealed.png') }}">
-            </td>
-        {% endfor %}
-        </tr>
-    {% endfor %}
     </table>
 </body>
 </html>

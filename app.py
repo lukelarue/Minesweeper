@@ -1,39 +1,41 @@
-from flask import Flask, jsonify, request, render_template
-from Legacy.minesweeper import Game  # Your Minesweeper module
-import uuid
-import numpy as np
+from flask import Flask, jsonify, render_template, request
+from MinesweeperEnv import Minesweeper
 
 app = Flask(__name__)
 
-games = {}
-
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
 @app.route('/start', methods=['POST'])
 def start():
     data = request.get_json()
-    length = data['length']
-    mines = data['mines']
-    game_id = str(uuid.uuid4())
-    games[game_id] = Game(length, mines)
-    first_random_selection = np.random.randint(0,length**2)
-    games[game_id].initMines(first_random_selection)
-    _ = games[game_id].action(first_random_selection)
-    
-    return jsonify(game_id=game_id, board=games[game_id].game_state.tolist())
+    n = int(data['boardSize'])
+    m = int(data['numMines'])
+
+    global env
+    env = Minesweeper(n, m)
+
+    _ = env.reset()
+
+    # Assuming the observation is a 2D numpy array
+    obs_list = env.game_state.tolist()
+
+    return jsonify({'board': obs_list})
 
 @app.route('/move', methods=['POST'])
 def move():
+    print(request)
     data = request.get_json()
-    game_id = data['game_id']
-    move = data['move']
-    game = games[game_id]
-    _ = game.action(move)
+    print(data)
+    action = int(data['action'])
 
-    return jsonify(game.game_state.tolist())
+    obs, reward, terminated, truncated, info = env.step(action)
+
+    # Assuming the observation is a 2D numpy array
+    obs_list = env.game_state.tolist()
+
+    return jsonify({'board': obs_list, 'reward': reward, 'terminated': terminated})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
-
+    app.run(debug=True)
