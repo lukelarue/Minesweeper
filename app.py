@@ -38,4 +38,4 @@ def move():
     return jsonify({'board': obs_list, 'info': info})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

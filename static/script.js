@@ -6,7 +6,7 @@ var flaggedCells = [];
 
 function startGame() {
     isGameOver = false;
-    boardSize = document.getElementById('boardSize').value;
+    boardSize = parseInt(document.getElementById('boardSize').value);
     numMines = document.getElementById('numMines').value;
     flaggedCells = Array(boardSize).fill().map(() => Array(boardSize).fill(false));
     fetch('/start', {
@@ -119,7 +119,7 @@ function flagCell(event, row, col) {
 
 
 function setMaxMines() {
-    boardSize = document.getElementById('boardSize').value;
+    boardSize = parseInt(document.getElementById('boardSize').value);
     var maxMines = Math.floor(boardSize * boardSize / 4);
     var minesInput = document.getElementById('numMines');
     minesInput.setAttribute('max', maxMines);
