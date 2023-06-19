@@ -217,7 +217,7 @@ class Minesweeper(gym.Env):
                 - 0 for taking an invalid action.
             - terminated (bool): A boolean flag indicating if the game has ended (either by hitting a mine or uncovering all safe tiles).
             - False (bool): A placeholder value for truncation. Always False in the implementation.
-            - {}: A placeholder for extra information. Always an empty dictionary in this implementation.
+            - {}: A placeholder for extra information. Contains a "result" string with "invalid action", "lose", "win", "continue" options.
         """
         
         if self.game_not_initialized:
@@ -227,13 +227,15 @@ class Minesweeper(gym.Env):
         if action in self.revealed_tiles: # do nothing as this is an invalid action - this tile has already been revealed
             reward = 0
             terminated = False
-            return self._convert_state(), reward, terminated, False, {}
+            result = "invalid action"
+            return self._convert_state(), reward, terminated, False, {"result": result}
         
         row, col = self._convertActionToCoordinates(action)
 
         if (self.board[row][col] == -1): # hit a mine and lose
             reward = -100
             terminated = True
+            result = "lose"
         
         else: # not hit a mine
             self._revealSafeTiles(row, col)
@@ -241,11 +243,13 @@ class Minesweeper(gym.Env):
             if(self.revealed_tiles == self.safe_tiles): # all safe tiles has been uncovered - victory!
                 reward = 100
                 terminated = True
+                result = "win"
             else: # more tile(s) are uncovered and the game continues
                 reward = 1
                 terminated = False
+                result = "continue"
         
-        return self._convert_state(), reward, terminated, False, {}
+        return self._convert_state(), reward, terminated, False, {"result": result}
     
     def reset(self, seed = None):
         """

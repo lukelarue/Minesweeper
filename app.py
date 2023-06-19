@@ -35,7 +35,7 @@ def move():
     # Assuming the observation is a 2D numpy array
     obs_list = env.game_state.tolist()
 
-    return jsonify({'board': obs_list, 'reward': reward, 'terminated': terminated})
+    return jsonify({'board': obs_list, 'info': info})
 
 if __name__ == '__main__':
     app.run(debug=True)

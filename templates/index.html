@@ -6,12 +6,14 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
-    <div class="center">
+    <div class="top-bar">
         <form onsubmit="startGame(); return false;">
             <input type="number" id="boardSize" min="4" max="25" value = "16" required placeholder="Enter board size" onchange="setMaxMines()">
             <input type="number" id="numMines" min="1" max="625" value = "40" required placeholder="Enter number of mines">
             <input type="submit" value="Start Game">
         </form>
+        <span id="gameResult"></span>
+        <span id="flagsUsed">Flags used: 0</span>
     </div>
     <table id="gameBoard">
     </table>
