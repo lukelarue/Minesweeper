@@ -7,11 +7,9 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['DEBUG'] = os.getenv('FLASK_DEBUG') == 'True' # Set debug mode to True for production
 
-# connect to Redis - Local
-#r = redis.Redis(host='localhost', port=6379, db=0)
-
-# connect to Redis - Heroku
+# connect to Redis
 r = redis.from_url(os.getenv("REDIS_URL"))
 
 @app.route('/')
@@ -36,7 +34,7 @@ def start():
 
     # pickle the environment and store in Redis
     pickled_env = pickle.dumps(env)
-    r.set('env_' + session['uuid'], pickled_env)
+    r.set('env_' + session['uuid'], pickled_env, 60 * 60 * 2) # Game expires 2 hours after creation or last move
 
     obs_list = env.game_state.tolist()
 
@@ -50,14 +48,14 @@ def move():
     # retrieve and unpickle the environment from Redis
     pickled_env = r.get('env_' + session['uuid'])
     if pickled_env is None:
-        return "Game not started. Please start the game first", 400
+        return "Game not started or game was deleted 2 hours after last move. Please start the game first", 400
     env = pickle.loads(pickled_env)
 
     obs, reward, terminated, truncated, info = env.step(action)
 
     # pickle the environment and store back in Redis
     pickled_env = pickle.dumps(env)
-    r.set('env_' + session['uuid'], pickled_env)
+    r.set('env_' + session['uuid'], pickled_env, 60 * 60 * 2) # Game data expires 2 hours after the last move
 
     # Assuming the observation is a 2D numpy array
     obs_list = env.game_state.tolist()
