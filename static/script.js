@@ -1,14 +1,27 @@
-// Global variables
+// Define game variables globally
 var boardSize;
 var numMines;
 var isGameOver = false;
 var flaggedCells = [];
 
+// Function to start a new game
 function startGame() {
+    // Reset game state
     isGameOver = false;
+
+    // Get board size and mine count from user input
     boardSize = parseInt(document.getElementById('boardSize').value);
     numMines = document.getElementById('numMines').value;
+    document.getElementById('currentSettings').innerText = `size ${boardSize} minesweeper board with ${numMines} mines`;
+
+    // Initialize flagged cell array
     flaggedCells = Array(boardSize).fill().map(() => Array(boardSize).fill(false));
+
+    // Reset Flags Used and previous victory condition
+    document.getElementById('flagsUsed').textContent = 'Flags used: ' + countFlags(flaggedCells);
+    gameResult.innerHTML = '&nbsp'
+
+    // Post request to '/start' endpoint to start the game on the server
     fetch('/start', {
         method: 'POST',
         headers: {
@@ -21,7 +34,7 @@ function startGame() {
     })
     .then(response => response.json())
     .then(data => {
-        // Generate game board in HTML
+        // Generate game board in HTML dynamically
         var gameBoard = document.getElementById('gameBoard');
         gameBoard.innerHTML = ''; // Clear any existing board
         for (var i = 0; i < boardSize; i++) {
@@ -41,12 +54,11 @@ function startGame() {
     });
 }
 
+// Function to make a move on the board
 function makeMove(row, col) {
-    if (isGameOver) {
+    // If the game is over or the cell is flagged, ignore the click
+    if (isGameOver || flaggedCells[row][col]) {
         return;
-    }
-    if (flaggedCells[row][col]) {
-        return; // If the cell is flagged, ignore the click
     }    
     fetch('/move', {
         method: 'POST',
@@ -59,27 +71,43 @@ function makeMove(row, col) {
     })
     .then(response => response.json())
     .then(data => {
-        // Update game board in HTML - board is redrawn
+        // If game has ended, data.actual_board will be the complete board.
+        var board = (data.info.result === 'win' || data.info.result === 'lose') ? data.actual_board : data.board;
         for (var i = 0; i < boardSize; i++) {
             for (var j = 0; j < boardSize; j++) {
                 var img = document.getElementById('cell'+i+'-'+j);
-                var imgValue = data.board[i][j];
-                if (flaggedCells[i][j]) {
-                    img.setAttribute('src', '/static/images/flag.png');
-                } else {
-                    // check if imgValue is 9, if yes, use 'unrevealed' as image name
-                    var imgName = imgValue === 9 ? 'unrevealed' : imgValue;
+                var imgValue = board[i][j];
+                var imgName = 'unrevealed';
+                if (imgValue === -1) {
+                    imgName = 'bomb';
+                } else if (imgValue >= 0 && imgValue <= 8) {
+                    imgName = imgValue.toString();
+                }
+        
+                // If the cell is flagged, keep displaying the flag image
+                if (!flaggedCells[i][j]) {
                     img.setAttribute('src', '/static/images/' + imgName + '.png');
+                }
+        
+                if (data.info.result === 'win' || data.info.result === 'lose') {
+                    img.classList.add('game-over');  // Grey out tiles if the game has ended.
                 }
             }
         }
 
+        if (data.info.result === 'lose') {
+            // Show a 'boom' image at the location of the last click
+            var img = document.getElementById('cell'+row+'-'+col);
+            img.setAttribute('src', '/static/images/boom.png');
+        }
+
+        // Update flags counter
         document.getElementById('flagsUsed').textContent = 'Flags used: ' + countFlags(flaggedCells);
         
         var gameResult = document.getElementById('gameResult');
-        gameResult.innerHTML = '';  // clear previous result message
+        gameResult.innerHTML = '';
 
-        // Update the game status based on the "info" dictionary
+        // Update game status message based on the result from server
         switch (data.info.result) {
             case 'win':
                 gameResult.style.color = 'green';
@@ -94,19 +122,25 @@ function makeMove(row, col) {
                 gameResult.innerText = 'Invalid action!';
                 break;
             default:
-                gameResult.innerText = '';  // for "continue", don't show any message
+                gameResult.innerHTML = '&nbsp';  // no message for "continue"
                 break;
         }
-        // Update the game over state based on the "info" dictionary
+
+        // Update game over state if win or loss is detected
         if (data.info.result === 'win' || data.info.result === 'lose') {
-            isGameOver = true;  // Set the game over state to true when a win or loss is detected
+            isGameOver = true;
         }
     });
 }
 
+// Function to flag a cell
 function flagCell(event, row, col) {
-    event.preventDefault(); // Prevents the usual context menu from popping up
+    // Prevent default context menu
+    event.preventDefault();
+
     var cellImg = document.getElementById('cell'+row+'-'+col);
+
+    // Toggle flagged state and image of cell
     if (cellImg.src.includes('flag')) {
         cellImg.src = '/static/images/unrevealed.png';
         flaggedCells[row][col] = false;
@@ -114,17 +148,20 @@ function flagCell(event, row, col) {
         cellImg.src = '/static/images/flag.png';
         flaggedCells[row][col] = true;
     }
+
+    // Update flags counter
     document.getElementById('flagsUsed').textContent = 'Flags used: ' + countFlags(flaggedCells);
 }
 
-
+// Function to set max mines based on board size
 function setMaxMines() {
     boardSize = parseInt(document.getElementById('boardSize').value);
-    var maxMines = Math.floor(boardSize * boardSize / 4);
+    var maxMines = Math.floor(boardSize * boardSize - 10);
     var minesInput = document.getElementById('numMines');
     minesInput.setAttribute('max', maxMines);
 }
 
+// Function to count total flags used
 function countFlags(flaggedCells) {
     return flaggedCells.reduce(function(sum, row) {
         return sum + row.reduce(function(sum, flagged) {
@@ -133,4 +170,8 @@ function countFlags(flaggedCells) {
     }, 0);
 }
 
-
+// Add a CSS class to an element
+function addCssClass(elem, cssClass) {
+    var currentClass = elem.className;
+    elem.className = currentClass ? currentClass + ' ' + cssClass : cssClass;
+}

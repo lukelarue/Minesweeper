@@ -3,19 +3,31 @@
 <head>
     <title>Minesweeper</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='images/bomb.png') }}">
 </head>
 <body>
     <div class="top-bar">
+        <!-- Add onsubmit handler to form to start the game when form is submitted -->
         <form onsubmit="startGame(); return false;">
-            <input type="number" id="boardSize" min="4" max="25" value = "16" required placeholder="Enter board size" onchange="setMaxMines()">
-            <input type="number" id="numMines" min="1" max="625" value = "40" required placeholder="Enter number of mines">
+            <label for="boardSize">Enter board size:</label>
+            <input type="number" id="boardSize" min="4" max="25" value = "16" required onchange="setMaxMines()">
+            <label for="numMines">Enter number of mines:</label>
+            <input type="number" id="numMines" min="1" max="246" value = "40" required>
             <input type="submit" value="Start Game">
         </form>
-        <span id="flagsUsed">Flags used: 0</span>
-        <span id="gameResult"></span>
     </div>
-    <table id="gameBoard">
-    </table>
+    <!-- Current game settings and result will be updated dynamically -->
+    <div id="currentSettings"></div>
+    <div id="flagsUsed">Flags used: 0</div>
+    <div id="gameResult"></div>
+
+    <!-- Error message placeholder, it will be updated dynamically -->
+    <div id="error" style="color: red;"></div>
+
+    <!-- Game board will be generated dynamically -->
+    <table id="gameBoard"></table>
+
+    <!-- Include the JavaScript file here to ensure it's loaded after the entire DOM has been constructed -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -1,20 +1,68 @@
-#gameResult {
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centers items horizontally */
+    flex-wrap: wrap; /* allows items to wrap to next line */
+    background-color: #e0e0e0;
+    padding: 10px 0;
+    margin-bottom: 10px;
+}
+
+.top-bar form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* allows form items to wrap to next line */
+    margin-bottom: 10px;
+}
+
+.top-bar label, .top-bar input {
+    margin: 0 5px;
+}
+
+.top-bar #gameResult {
     font-size: 18px;
     font-weight: bold;
+    margin: 0 10px;
+}
+
+#currentSettings {
+    text-align: center; /* centers the text */
+    font-size: 20px; /* makes the text bigger */
+    font-weight: bold; /* makes the text bold */
+    margin-bottom: 10px; /* adds some space below the text */
+}
+
+#flagsUsed {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#gameResult {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 #boardSize, #numMines {
     width: 150px;
 }
 
-#grid {
-    border-collapse: collapse;
+#gameBoard {
+    margin: 0 auto; /* centers the game board */
 }
 
-#grid td {
+#gameBoard td {
     width: 30px;
     height: 30px;
-    border: 1px solid #000;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -24,19 +72,11 @@
     height: 30px;
 }
 
-.top-bar {
-    display: flex;
-    align-items: center; /* aligns items vertically in the middle */
+#gameBoard img:hover {
+    transform: scale(1.1);  /* Slightly increases the size of the image when hovered */
 }
 
-.top-bar form {
-    display: flex;
-    align-items: center;
+.game-over {
+    filter: grayscale(75%);
+    opacity: 0.6;
 }
-
-.top-bar #result {
-    margin-left: 20px; /* adds some space to the left of the result */
-}
-
-
-
