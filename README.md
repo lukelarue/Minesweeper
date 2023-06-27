@@ -20,7 +20,8 @@ To run the application on your local machine, follow these steps:
 1. Clone the repository: `git clone https://github.com/<your-username>/minesweeper.git`
 2. Navigate to the project directory: `cd minesweeper`
 3. Install the dependencies: `pip install -r requirements.txt`
-4. Start the Flask application: `python app.py`
+4. Install redis and set environment variables found in app.py
+5. Start the Flask application: `python app.py`
 
 The application will be available at `localhost:5000` in your web browser.
 
