@@ -3,3 +3,7 @@ numpy
 gymnasium 
 redis
 gunicorn
+flask-bcrypt
+flask-sqlalchemy
+flask-login
+psycopg2
